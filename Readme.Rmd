@@ -1,0 +1,87 @@
+---
+title: "Readme"
+author: "Jarrett Byrnes"
+date: "June 8, 2015"
+output: md_document
+---
+
+
+```{r}
+#Load methods for dealing with data
+source("./R/dataGenerationFunctions.R")
+
+#Load the fish data
+fish <- read.csv("./data/rawData_SBCfish.csv")
+fish <- subset(fish, fish$Year!=2000) #too much variation in this year
+```
+
+So, there are differences in # of years sampled from site to site and we want the core set that was sampled in all years filter to sites that are in the whole dataset
+
+```{r}
+fishSamples <- fish %>% group_by(Latitude, Longitude, Year) %>%
+  summarise(n=n()) %>% ungroup() %>% 
+  group_by(Latitude, Longitude) %>%
+  summarise(nYearsSampled=n()) %>% 
+  ungroup() %>%
+  filter(nYearsSampled==max(nYearsSampled))
+
+fishSamples$SampleID <- 1:nrow(fishSamples)
+  
+#use inner_join to filter down to those sites only
+fish <- inner_join(fish, fishSamples)
+
+#we'll need this later
+nplots <- length(unique(paste(fish$Latitude, fish$Longitude)))
+
+
+```
+
+
+Create a simulated data set where for every scale, there are the same number of observations (total number of transects) and plot it relative to different predictors on the X-axis
+
+Note, getSubData takes the following arguments:
+  dataset - the name of a dataset 
+  nplots - total number of unique plots
+  n - the number of plots that will be used to create a n plot set
+  noSpecies="-99999"- the code in the dataset for no species being in a plot
+  uniquePerms=T - Only create unique permutations where no plots are shared within set of plots (sampling without replacement)
+
+```{r, echo=FALSE}
+
+simData <- lapply(2:17, function(m) getSubData(fish, nplots, m, sampleframe=fishSamples))
+simData <- plyr::ldply(simData)
+```
+
+Look at it!
+```{r plotTseries}
+library(ggplot2)
+
+qplot(Year, Aggregated_Richness, data=simData, group=SampleID, 
+      geom="line", color=Bounded_region, facets=~Scale)
+
+qplot(Scale, Aggregated_Richness, data=simData, group=Year, 
+      geom="point",size=I(0), color=Year) +
+  stat_smooth(fill=NA)
+
+qplot(Bounded_region, Aggregated_Richness, data=simData, group=SampleID, 
+      geom="point", color=Scale, facets=~Year)
+```
+
+And a sample analysis - although this will get better, right Forest?
+
+```{r analysis}
+library(lme4)
+library(lmerTest)
+#We want to do this, but it won't converge
+#mod.full <- lmer(Aggregated_Richness ~ Year*Scale*Bounded_region +
+#                   (1+ Year*Scale*Bounded_region|sampleID),
+#                 data=simData)
+
+
+#instead we do this
+mod.novarslope.ranef<- lmer(Aggregated_Richness ~ Year*log(Scale)*Bounded_region +
+                                   (1+log(Scale)|SampleID),
+                                 data=simData)
+
+summary(mod.novarslope.ranef)
+```

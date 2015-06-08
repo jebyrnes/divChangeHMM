@@ -19,6 +19,7 @@ theme_set(theme_bw(base_size=17))
 library(lme4)
 library(lmerTest)
 
+#Load methods for dealing with data
 source("./dataGenerationFunctions.R")
 
 #Load the fish data
