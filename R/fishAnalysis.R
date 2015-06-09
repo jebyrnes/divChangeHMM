@@ -8,12 +8,13 @@
 #Load libraries and data
 #########
 
-#for data aggregation
-library(dplyr)
-
 #for plotting
+library(plyr)
 library(ggplot2)
 theme_set(theme_bw(base_size=17))
+
+#for data aggregation
+library(dplyr)
 
 #For analysis
 library(lme4)
@@ -34,9 +35,9 @@ fish <- subset(fish, fish$Year!=2000) #too much variation in this year
 #########
 
 fishSamples <- fish %>% group_by(Latitude, Longitude, Year) %>%
-  summarise(n=n()) %>% ungroup() %>% 
+  summarise(n=length(Latitude)) %>% ungroup() %>%  #reduce the dataset down to one line per site*year
   group_by(Latitude, Longitude) %>%
-  summarise(nYearsSampled=n()) %>% 
+  summarise(nYearsSampled=length(Latitude)) %>% 
   ungroup() %>%
   filter(nYearsSampled==max(nYearsSampled))
 
@@ -80,7 +81,7 @@ qplot(Year, Aggregated_Richness, data=fishAll, geom="line") + xlab("Year") +ylab
 # And plot it relative to different predictors on the X-axis
 #########
 
-simData <- lapply(2:17, function(m) getSubData(fish, nplots, m, sampleframe=fishSamples))
+simData <- lapply(2:14, function(m) getSubData(fish, nplots, m, sampleframe=fishSamples))
 simData <- plyr::ldply(simData)
 simData <- plyr::rbind.fill(simData, fishPlot)
 
