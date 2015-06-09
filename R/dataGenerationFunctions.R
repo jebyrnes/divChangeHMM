@@ -55,7 +55,7 @@ unique_perm_sample <- function(v, l){
 }
 #
 getSubData <- function(dataset, 
-                       nplots, n, 
+                       nplots, nsamps, 
                        sampleframe=NA, noSpecies="-99999",
                        uniquePerms=T){
   #if no sample frame with unique info about samples has been provided, make one
@@ -73,29 +73,11 @@ getSubData <- function(dataset,
   
   #what are the combinations of samples 
   #############consider permutations
-  samps <- replicate(nplots, sample.int(nplots,n))
-  if(uniquePerms) samps <- unique_perm_sample(1:nplots,n)
-  if(n==1) samps <- 1:nrow(dataset)
+  samps <- replicate(nplots, sample.int(nplots,nsamps))
+  if(uniquePerms) samps <- unique_perm_sample(1:nplots,nsamps)
+  if(nsamps==1) samps <- 1:nrow(dataset)
   
-  newdata <- apply(samps, 2, function(x){
-    #subset the data to one set of plots
-    subdata <- dataset %>% filter(SampleID %in% x)
-    
-    #create a set of data for this group of plots 
-    subdataOut <- subdata %>% group_by(Year) %>%
-      summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
-                Scale=length(unique(paste(Latitude, Longitude))),
-                Bounded_region=getBoundingRegion(data.frame(Latitude=Latitude, Longitude=Longitude)),
-                SampleID=paste(x, collapse="-"))
-    
-    #deal with 0 species, so we don't have false 1 species samples
-    noSp <- as.numeric(noSpecies %in% unique(subdata$Species))
-    
-    subdataOut$Aggregated_Richness <- subdataOut$Aggregated_Richness - noSp
-    
-    subdataOut
-    
-  })
+  newdata <- apply(samps, 2, function(x) makDatasetFromSampleIds(x, dataset, noSpecies=noSpecies))
   
   #turn the list back into a data frame
   plyr::ldply(newdata)
