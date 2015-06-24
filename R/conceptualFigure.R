@@ -12,7 +12,7 @@ source("./fishPrep.R")
 fishAll$SampleID <- "All"
 
 ##Create an intermediate data set
-fishMed <- getSubData(fish, nplots, 9, 
+fishMed <- getSubData(fish, nplots, 6, 
                       sampleframe=fishSamples,
                       uniquePerms=T)
 
@@ -26,7 +26,7 @@ fishMed <- getSubData(fish, nplots, 9,
 fishForFig <- plyr::rbind.fill(fishPlot, fishAll, fishMed)
 
 fishForFig <- join(fishForFig, 
-                   data.frame(Scale=c(1,9,nplots),
+                   data.frame(Scale=c(1,6,nplots),
                               Aggregation=c("Small", "Medium", "Large")))
 
 #make sure facets are in the right order
@@ -53,7 +53,7 @@ simpleSE <- se.fixef(simpleMod)
 
 coefDataFrame <- data.frame(Aggregation=c("Small", "Medium", "Large"),
                             Trend = c(fixef(simpleMod)[2]+fixef(simpleMod)[4],
-                                      fixef(simpleMod)[2]+fixef(simpleMod)[4]*log(9),
+                                      fixef(simpleMod)[2]+fixef(simpleMod)[4]*log(6),
                                       fixef(simpleMod)[2]+fixef(simpleMod)[4]*log(nplots)
                             ),
                             se=simpleSE[2]+simpleSE[4]
