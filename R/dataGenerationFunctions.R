@@ -96,7 +96,7 @@ makDatasetFromSampleIds <- function(x, dataset, noSpecies="-99999" ){
     summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
               Scale=length(unique(paste(Latitude, Longitude))),
               Bounded_region=getBoundingRegion(data.frame(Latitude=Latitude, Longitude=Longitude)),
-              sampleID=paste(x, collapse="-"),
+              SampleID=paste(x, collapse="-"),
               noSp = as.numeric(noSpecies %in% unique(Species)))
   
   #deal with 0 species, so we don't have false 1 species samples
