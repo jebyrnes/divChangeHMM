@@ -9,12 +9,26 @@
 # File is to large for my github account
 ##############
 
+# Robin's learning how to branch out. 
+
 library(readr)
 library(lubridate)
 library(dplyr)
 
 
-temp_data <- read_csv("../data/bottom_temp_all_years.csv")
+temp_data <- read_csv("../data/bottom_temp_all_years_20130410.csv")
+head(temp_data)
+
+#Make daily summaries
+temp_summary_daily <- temp_data %>%
+  mutate(Day = day(Date), Month = month(Date), Year = year(Date)) %>%
+  group_by(Year, Month, Day, site) %>%
+  summarise(mean_temp_c = mean(temp_c, na.rm=T),
+            max_temp_c = max(temp_c, na.rm=T),
+            min_temp_c = min(temp_c, na.rm=T)) %>% 
+  ungroup()
+
+write_csv(temp_summary_daily, "../data/sbc_temp_summary_daily.csv")
 
 #Make monthly summaries
 temp_summary_monthly <- temp_data %>%
