@@ -14,10 +14,10 @@ library(lmerTest)
 #use fishPlot for analysis
 source("fishPrep.R")
 
-temp_summary_annual <- read.csv("../data/sbc_temp_summary_MayToJuly.csv")
-temp_summary_annual <- temp_summary_annual %>% rename(Site=site)
+temp <- read.csv("../data/sbc_temp_summary_MayToJuly.csv")
+temp <- temp %>% rename(Site=site)
 
-waves <- read.csv("../data/sbc_wave_summary_annual.csv")
+waves <- read.csv("../data/sbc_wave_summary_MayToJuly.csv")
 waves <- waves %>% rename(Nearest.MOP=mop)
 
 sites <- read.csv("../data/LTER_Sites_latlong.csv")
@@ -26,7 +26,7 @@ sites <- read.csv("../data/LTER_Sites_latlong.csv")
 #Combine datasets
 ######
 #join the lat/long info with temps
-tempSites <- join(sites, temp_summary_annual)
+tempSites <- join(sites, temp)
 
 tempWavesSites <- join(tempSites, waves)
 
@@ -48,7 +48,7 @@ fishWithPredictors <- join(fishPlot, tempWavesSites) %>%
 #Model the effect of temperature
 
 tempLmer <- lmer(Aggregated_Richness ~ Year + 
-                   mean_temp_c + max_waveheight +
-                   (1|Site/Transect) ,
+                   mean_temp_c * mean_waveheight +
+                   (1 |Site/Transect) ,
                  data=fishWithPredictors)
 summary(tempLmer)
