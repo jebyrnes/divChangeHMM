@@ -14,7 +14,7 @@ library(lmerTest)
 #use fishPlot for analysis
 source("fishPrep.R")
 
-temp_summary_annual <- read.csv("../data/sbc_temp_summary_annual.csv")
+temp_summary_annual <- read.csv("../data/sbc_temp_summary_MayToJuly.csv")
 temp_summary_annual <- temp_summary_annual %>% rename(Site=site)
 
 waves <- read.csv("../data/sbc_wave_summary_annual.csv")
@@ -49,6 +49,6 @@ fishWithPredictors <- join(fishPlot, tempWavesSites) %>%
 
 tempLmer <- lmer(Aggregated_Richness ~ Year + 
                    mean_temp_c + max_waveheight +
-                   (1+max_waveheight+mean_temp_c|Site),
+                   (1|Site/Transect) ,
                  data=fishWithPredictors)
 summary(tempLmer)

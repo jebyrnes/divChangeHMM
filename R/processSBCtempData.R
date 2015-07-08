@@ -37,3 +37,14 @@ temp_summary_annual <- temp_summary_monthly %>%
             min_mean_temp_c = min(mean_temp_c, na.rm=T))
 
 write_csv(temp_summary_annual, "../data/sbc_temp_summary_annual.csv")
+
+#Just the three previous months
+
+temp_summary_3prev <- temp_summary_monthly %>% 
+  filter(Month %in% c(5,6,7)) %>%
+  group_by(Year, site) %>% 
+  summarise(mean_temp_c = mean(mean_temp_c, na.rm=T),
+            max_mean_temp_c = max(mean_temp_c, na.rm=T),
+            min_mean_temp_c = min(mean_temp_c, na.rm=T))
+
+write_csv(temp_summary_3prev, "../data/sbc_temp_summary_MayToJuly.csv")

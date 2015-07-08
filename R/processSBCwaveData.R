@@ -32,3 +32,15 @@ wave_summary_annual <- wave_summary_monthly %>%
   ungroup()
 
 write_csv(wave_summary_annual, "../data/sbc_wave_summary_annual.csv")
+
+
+wave_summary_3prev <- wave_summary_monthly %>%
+  mutate(interval_year = ifelse(Month<7, Year, Year+1)) %>%
+  filter(Month %in% c(5,6,7)) %>%
+  group_by(interval_year, mop) %>% 
+  summarise(mean_waveheight = mean(mean_waveheight, na.rm=T),
+            max_waveheight = max(max_waveheight, na.rm=T),
+            mean_max_waveheight=mean(mean_max_waveheight, na.rm=T)) %>% 
+  ungroup()
+
+write_csv(wave_summary_3prev, "../data/sbc_wave_summary_MayToJuly.csv")
