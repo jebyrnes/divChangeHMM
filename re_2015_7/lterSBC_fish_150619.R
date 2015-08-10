@@ -16,7 +16,7 @@
 
 library(reshape2)
 library(ggplot2)
-theme_set(theme_bw(base_size=17))
+theme_set(theme_bw(base_size=12))
 library(dplyr)
 options(dplyr.print_max = 1e9)
 library(vegan)
@@ -277,20 +277,21 @@ lmeDat <- fish
 # center year on 2007
 unique(lmeDat$YEAR)
 lmeDat$YEARZ <- lmeDat$YEAR - 2007
+unique(lmeDat$YEARZ)
 # using the centered year doesn't improve the 
 # correlation between slope and int
 str(lmeDat)
 
 rand1 <- ~ 1 | SITE
-rand2 <- ~ YEAR | SITE
-rand3 <- ~ YEAR | TRANSECT
+rand2 <- ~ YEARZ | SITE
+rand3 <- ~ YEARZ | TRANSECT
 
-fm1 <- lme(fixed = rich ~ YEAR, 
+fm1 <- lme(fixed = rich ~ YEARZ, 
               data = lmeDat, method = "ML", 
-              random =  list(rand1, rand3), 
+              random =  list(rand3), 
               correlation = corAR1())
-summary(fm1)
-plot(fm1)
+
+transect_YEARZ <- summary(fm1)$tTable[2,]
 
 no_legend <- theme(legend.position = "none")
 
@@ -332,8 +333,59 @@ regDF <- divMetF(regDF, 4, dim(regDF)[2])
 names(alphaDF)
 names(gammaDF)
 
+##########################################
+# Mixed model for gammaDF
+summary(gammaDF$year)
+gammaDF$yearZ <- gammaDF$year - 2007
+summary(gammaDF)
 
+fm2 <- lme(fixed = rich ~ yearZ, 
+           data = gammaDF, method = "ML", 
+           random =  list(~ 1 | site), 
+           correlation = corAR1())
+summary(fm2)$tTable
 
+site_YEARZ <- summary(fm2)$tTable[2,]
+##########################################
+
+##########################################
+# Linear model for regDF
+summary(regDF$year)
+regDF$yearZ <- regDF$year - 2007
+summary(regDF)
+
+# need a dummy variable 
+regDF$dummy <- rep(1, dim(regDF)[1])
+
+fm3 <- lme(fixed = rich ~ yearZ, 
+           data = regDF, method = "ML", 
+           random = ~ 1|dummy, 
+           correlation = corAR1())
+summary(fm3)$tTable[2,]
+
+region_YEARZ <- summary(fm3)$tTable[2,]
+##########################################
+# bind the slope and se's 
+scale_yearZ <- as.data.frame(rbind(transect_YEARZ, site_YEARZ, region_YEARZ))
+scale_yearZ
+scale_yearZ$scale <- c("Transect", "Site", "Regional")
+
+# relevel
+scale_yearZ$scale <- factor(scale_yearZ$scale, levels = c("Transect", "Site", "Regional"))
+
+scale_trend <- ggplot(scale_yearZ, 
+                      mapping=aes(x = scale, y = Value, 
+                                  ymin = Value - 2*Std.Error, ymax = Value + 2*Std.Error)) +
+  geom_point(size = 4) +
+  geom_linerange(size = 1) +
+  ylab("Temporal trend in richness\n(change in # of species/year)\n") + 
+  xlab("Scale") +
+  geom_hline(a = 0, linetype = 'dashed')
+
+scale_trend
+ggsave("./figs/scale_trend.pdf", width = 5, height = 5)
+
+##########################################
 pSites <- qplot(year, rich, data = gammaDF, color = site, 
                     geom = "line", xlab = "Year", ylab = "S") + 
   no_legend + ggtitle("Site scale")
@@ -363,6 +415,13 @@ multiplot(pTransects, pSites, pRegion, layout = matrix(c(1,1,2,3),
 
 # save multiplot as 8x8 figure
 
+multiplot(pTransects, pSites, pRegion, scale_trend,
+          layout = matrix(c(1,1,2,3,4,4), nrow = 3, byrow = TRUE))
+
+
+########
+########
+########
 ########
 summary(alphaDF$div)
 # DIVERSITY

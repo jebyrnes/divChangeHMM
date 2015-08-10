@@ -24,6 +24,7 @@ fishMed <- getSubData(fish, nplots, 6,
 
 #bind them together
 fishForFig <- plyr::rbind.fill(fishPlot, fishAll, fishMed)
+head(fishForFig)
 
 fishForFig <- join(fishForFig, 
                    data.frame(Scale=c(1,6,nplots),
@@ -69,3 +70,4 @@ bottomPanel <- ggplot(coefDataFrame, mapping=aes(x=Aggregation, y=Trend,
 
 library(gridExtra)
 grid.arrange(topPanel, bottomPanel, ncol=1)
+
