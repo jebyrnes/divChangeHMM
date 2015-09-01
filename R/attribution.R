@@ -58,7 +58,7 @@ fishWithPredictors <- join(fishWithPredictors, hard_substrate)
 fishLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) + 
                    mean_temp_c* mean_waveheight +
                    log_stipe_density + Hard_Substrate_Percent +
-                   (1 |Site/Transect) ,
+                   (1 |Site/Transect),
                  data=fishWithPredictors)
 summary(fishLmer)
 
