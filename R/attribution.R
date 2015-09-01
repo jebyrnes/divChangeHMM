@@ -55,12 +55,12 @@ fishWithPredictors <- join(fishWithPredictors, hard_substrate)
 # with a temp*wave interaction as abiotic influences might both affect one 
 # another
 
-tempLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) + 
-                   mean_temp_c * mean_waveheight +
+fishLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) + 
+                   mean_temp_c* mean_waveheight +
                    log_stipe_density + Hard_Substrate_Percent +
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)
-summary(tempLmer)
+summary(fishLmer)
 
 qplot(mean_temp_c, Aggregated_Richness, group=paste(Site, Transect),
       data=fishWithPredictors, size=mean_waveheight, alpha=I(0.7), 
@@ -79,14 +79,43 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 # Let's take a gander at kelp
 #
 # Although we have no expectations, as it's *winter*
-# conditions that drive kelp abundance
+# wave conditions that drive kelp abundance
 ########
 
 kelpLmer <- lmer(log_stipe_density ~ scale(Year, scale=F) + 
-                   mean_temp_c * mean_waveheight + 
+                    mean_waveheight*
+                   I(mean_temp_c^2)  + 
                    Hard_Substrate_Percent+
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)
 summary(kelpLmer)
 
-with(fishWithPredictors, cor(cbind(mean_temp_c, mean_waveheight, stipe_density)))
+
+########
+# Let's take a gander at temperature
+#
+# Although we have no expectations, as it's *winter*
+# wave conditions that drive kelp abundance
+########
+
+tempLmer <- lmer(mean_temp_c ~ scale(Year, scale=F) + 
+                   (1 |Site/Transect) ,
+                 data=fishWithPredictors)
+summary(tempLmer)
+
+
+
+
+########
+# Let's take a gander at waves
+#
+# Although we have no expectations, as it's *winter*
+# wave conditions that drive kelp abundance
+########
+
+waveLmer <- lmer(mean_waveheight ~ scale(Year, scale=F) + 
+                   (1 |Site/Transect) ,
+                 data=fishWithPredictors)
+summary(waveLmer)
+
+
