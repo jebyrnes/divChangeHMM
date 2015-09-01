@@ -21,6 +21,9 @@ waves <- read.csv("../data/sbc_wave_summary_MayToJuly.csv")
 waves <- waves %>% rename(Nearest.MOP=mop, Year=interval_year)
 
 kelp <- read.csv("../data/sbc_macrocystis_annual.csv")
+kelp$log_stipe_density <- log(kelp$stipe_density+1)
+
+hard_substrate <- read.csv("../data/sbc_hard_substrate.csv")
 
 sites <- read.csv("../data/LTER_Sites_latlong.csv")
 
@@ -43,7 +46,7 @@ fishWithPredictors <- join(fishPlot, tempWavesKelpSites) %>%
   filter(!is.na(mean_temp_c))%>% 
   filter(!is.na(mean_waveheight))
 
-
+fishWithPredictors <- join(fishWithPredictors, hard_substrate)
 ######
 # Modeling attribution
 ######
@@ -54,7 +57,7 @@ fishWithPredictors <- join(fishPlot, tempWavesKelpSites) %>%
 
 tempLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) + 
                    mean_temp_c * mean_waveheight +
-                   stipe_density +
+                   log_stipe_density + Hard_Substrate_Percent +
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)
 summary(tempLmer)
@@ -79,8 +82,9 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 # conditions that drive kelp abundance
 ########
 
-kelpLmer <- lmer(stipe_density ~ scale(Year, scale=F) + 
-                   mean_temp_c * mean_waveheight +
+kelpLmer <- lmer(log_stipe_density ~ scale(Year, scale=F) + 
+                   mean_temp_c * mean_waveheight + 
+                   Hard_Substrate_Percent+
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)
 summary(kelpLmer)
