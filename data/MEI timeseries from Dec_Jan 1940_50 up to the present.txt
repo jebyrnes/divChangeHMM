@@ -1,0 +1,129 @@
+
+<!-- saved from url=(0048)http://www.esrl.noaa.gov/psd/enso/mei/table.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>MEI timeseries from Dec/Jan 1940/50 up to the present</title></head>
+<body data-feedly-mini="yes"><div id="StayFocusd-infobar" style="display: none; top: 0px;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+<pre>MEI Index (last update: 3 December 2015)
+
+Bimonthly MEI values (in 1/1000 of standard deviations), starting with Dec1949/Jan1950, thru last
+month.  More information on the MEI can be found on the <a href="http://www.esrl.noaa.gov/psd/enso/mei/mei.html">MEI homepage</a>.
+Missing values are left blank.  Note that values can still change with each monthly update, even 
+though such changes are typically smaller than +/-0.1.  All values are normalized for each bimonthly
+season so that the 44 values from 1950 to 1993 have an average of zero and a standard deviation of "1".  
+Responses to 'FAQs' can be found below this table:
+
+YEAR    DECJAN  JANFEB  FEBMAR  MARAPR  APRMAY  MAYJUN  JUNJUL  JULAUG  AUGSEP  SEPOCT  OCTNOV  NOVDEC
+1950	-1.027	-1.149	-1.298	-1.081	-1.427	-1.391	-1.309	-1.057	-.627	-.424	-1.171	-1.25
+1951	-1.071	-1.199	-1.212	-.447	-.321	.376	.659	.822	.734	.731	.709	.466
+1952	.403	.12	.058	.236	-.315	-.684	-.306	-.233	.313	.274	-.359	-.129
+1953	.016	.375	.244	.707	.788	.198	.36	.206	.484	.078	.063	.311
+1954	-.054	-.022	.181	-.514	-1.452	-1.558	-1.377	-1.481	-1.165	-1.361	-1.139	-1.106
+1955	-.772	-.708	-1.15	-1.585	-1.646	-2.272	-2.007	-2.067	-1.831	-1.767	-1.852	-1.863
+1956	-1.439	-1.3	-1.402	-1.164	-1.312	-1.505	-1.265	-1.142	-1.371	-1.469	-1.058	-1.021
+1957	-.949	-.348	.163	.349	.881	.745	.902	1.128	1.148	1.077	1.122	1.231
+1958	1.472	1.453	1.325	1.038	.716	.878	.687	.415	.173	.202	.468	.707
+1959	.578	.807	.501	.236	.025	-.012	-.142	.108	.102	-.067	-.176	-.263
+1960	-.31	-.268	-.083	.011	-.345	-.263	-.349	-.257	-.466	-.363	-.341	-.432
+1961	-.152	-.27	-.093	.013	-.28	-.115	-.23	-.301	-.293	-.526	-.44	-.643
+1962	-1.091	-.985	-.712	-1.03	-.914	-.861	-.713	-.546	-.554	-.676	-.625	-.48
+1963	-.7	-.823	-.682	-.791	-.465	-.088	.39	.597	.749	.817	.843	.748
+1964	.855	.439	-.299	-.611	-1.25	-1.12	-1.414	-1.511	-1.311	-1.225	-1.242	-.913
+1965	-.526	-.324	-.254	.083	.51	.919	1.356	1.436	1.399	1.217	1.355	1.256
+1966	1.308	1.183	.687	.542	-.157	-.157	-.142	.147	-.091	-.035	.007	-.181
+1967	-.473	-.944	-1.073	-1.052	-.442	-.251	-.517	-.403	-.616	-.686	-.425	-.366
+1968	-.593	-.684	-.592	-.949	-1.093	-.794	-.535	-.1	.224	.426	.59	.359
+1969	.69	.867	.447	.628	.706	.816	.462	.182	.165	.508	.67	.383
+1970	.361	.41	.215	-.062	-.142	-.674	-1.086	-1.027	-1.258	-1.091	-1.078	-1.248
+1971	-1.224	-1.518	-1.812	-1.902	-1.432	-1.441	-1.217	-1.235	-1.465	-1.424	-1.33	-1.011
+1972	-.594	-.417	-.251	-.195	.5	1.106	1.826	1.827	1.547	1.651	1.747	1.745
+1973	1.704	1.473	.829	.467	-.141	-.803	-1.085	-1.356	-1.729	-1.671	-1.496	-1.87
+1974	-1.942	-1.79	-1.756	-1.675	-1.051	-.649	-.758	-.657	-.624	-1.053	-1.243	-.931
+1975	-.566	-.613	-.894	-.99	-.867	-1.14	-1.51	-1.745	-1.877	-1.986	-1.771	-1.757
+1976	-1.625	-1.404	-1.255	-1.189	-.463	.331	.624	.658	1.029	.938	.49	.552
+1977	.518	.258	.091	.544	.305	.444	.865	.695	.801	.993	.97	.879
+1978	.779	.904	.964	.177	-.394	-.585	-.44	-.192	-.386	-.024	.178	.399
+1979	.596	.354	-.021	.278	.374	.397	.372	.636	.779	.666	.744	1.016
+1980	.698	.611	.685	.914	.95	.891	.759	.328	.279	.209	.252	.118
+1981	-.243	-.153	.453	.646	.14	-.03	-.046	-.085	.178	.108	-.036	-.148
+1982	-.278	-.138	.102	-.013	.432	.965	1.614	1.817	1.808	2.019	2.433	2.411
+1983	2.687	2.903	3.024	2.835	2.537	2.201	1.767	1.155	.481	.034	-.131	-.172
+1984	-.338	-.563	.126	.3	.106	-.081	-.086	-.159	-.101	.009	-.344	-.611
+1985	-.557	-.605	-.742	-.477	-.718	-.098	-.143	-.354	-.513	-.135	-.057	-.289
+1986	-.302	-.176	.055	-.152	.35	.313	.387	.804	1.122	.98	.865	1.181
+1987	1.237	1.184	1.727	1.867	2.14	1.954	1.855	1.982	1.888	1.643	1.271	1.253
+1988	1.093	.661	.45	.304	.081	-.649	-1.12	-1.319	-1.499	-1.315	-1.44	-1.339
+1989	-1.165	-1.323	-1.052	-.849	-.44	-.239	-.439	-.483	-.277	-.314	-.045	.145
+1990	.234	.524	.918	.403	.638	.491	.133	.14	.384	.28	.39	.339
+1991	.312	.32	.409	.471	.747	1.118	1.024	1.022	.759	1.024	1.2	1.318
+1992	1.749	1.87	1.987	2.269	2.148	1.762	1.022	.573	.52	.664	.589	.642
+1993	.701	1.005	.994	1.408	1.994	1.556	1.168	1.032	.987	1.063	.839	.565
+1994	.34	.194	.168	.45	.557	.808	.889	.769	.903	1.419	1.29	1.184
+1995	1.198	.974	.883	.437	.523	.489	.191	-.164	-.413	-.471	-.453	-.553
+1996	-.64	-.587	-.243	-.495	-.13	.053	-.197	-.377	-.443	-.349	-.13	-.337
+1997	-.485	-.602	-.244	.537	1.17	2.339	2.826	3.038	3.049	2.417	2.575	2.326
+1998	2.481	2.774	2.728	2.632	2.164	1.239	.346	-.36	-.587	-.795	-1.099	-1.01
+1999	-1.151	-1.247	-1.087	-1.053	-.66	-.365	-.486	-.767	-.974	-.977	-1.042	-1.205
+2000	-1.195	-1.252	-1.151	-.548	.16	-.04	-.169	-.141	-.219	-.372	-.712	-.582
+2001	-.539	-.725	-.615	-.156	.221	.032	.292	.366	-.108	-.266	-.159	.005
+2002	-.049	-.21	-.196	.356	.843	.948	.684	.949	.859	.976	1.076	1.114
+2003	1.185	.933	.828	.325	.088	.089	.165	.267	.459	.519	.536	.319
+2004	.31	.333	-.117	.243	.518	.283	.527	.665	.531	.497	.815	.647
+2005	.302	.804	1.032	.589	.801	.519	.508	.329	.288	-.149	-.376	-.583
+2006	-.469	-.463	-.584	-.689	-.004	.592	.669	.76	.825	.934	1.322	.953
+2007	.972	.505	.074	-.053	.226	-.221	-.246	-.409	-1.092	-1.103	-1.119	-1.164
+2008	-1.009	-1.408	-1.645	-.964	-.352	.16	.073	-.24	-.561	-.72	-.502	-.66
+2009	-.752	-.728	-.726	-.156	.366	.894	1.001	.991	.805	1.038	1.088	1.013
+2010	1.153	1.524	1.385	.894	.62	-.269	-1.073	-1.777	-1.954	-1.896	-1.523	-1.574
+2011	-1.677	-1.563	-1.56	-1.478	-.273	-.048	-.05	-.44	-.713	-.939	-.886	-.976
+2012	-1.045	-.711	-.432	.052	.739	.936	1.168	.581	.328	.139	.21	.041
+2013	.041	-.173	-.181	.002	.116	-.181	-.373	-.528	-.095	.135	-.027	-.3
+2014	-.312	-.258	.012	.193	.967	.997	.923	.938	.602	.411	.772	.578
+2015	.406	.468	.65	.953	1.567	2.06	1.972	2.367	2.527	2.225	2.308
+
+(1) If you are trying to relate the MEI to monthly values of, say, precipitation, it may be 
+    expedient to use the MEI value of month(i-1) and month(i) as if it were the value for 
+    month(i) only. Since it takes a week or so for the global atmosphere to respond to tropical
+    SST anomalies, the resulting lag is thus built into the analysis (I have verified this for
+    southwest U.S. precipitation).
+
+(2) Next update: 9 January 2016 (probably earlier)
+
+(3) Are there MEI values available prior to 1950? YES, the link to the sister website for
+    the MEI.ext is <a href="http://www.esrl.noaa.gov/psd/enso/mei.ext">here</a>.
+    Numerical values for the MEI.ext are available 
+    <a href="http://www.esrl.noaa.gov/psd/enso/mei.ext/table.ext.html">here</a>.
+
+(4) Why do I believe that the MEI is better for monitoring ENSO than the SOI or various SST
+    indices?  In brief, the MEI integrates more information than other indices, it reflects
+    the nature of the coupled ocean-atmosphere system better than either component, and it is
+    less vulnerable to occasional data glitches in the monthly update cycles. Now, if you are
+    interested in ENSO impacts in a very specific part of the world, I would suggest that you
+    obtain other ENSO indices as well and establish which one best fits your needs. 
+    For instance, in Australia, Darwin sea level pressure and/or the SOI may be more appropriate
+    than the MEI. My claim here is that the MEI does a better job than other indices for the 
+    overall monitoring of the ENSO phenomenon, including, for instance, world-wide correlations 
+    with surface temperatures and rainfall.
+
+(5) I have been asked about MEI-like indices for the Indian Ocean, and at present I have no such
+    project under way, nor do I know of any such data.
+
+(6) Given the integrative approach of the MEI, I am very hesitant to give out subsets of the data
+    that make up the MEI (for instance, its SST or SLP components alone).  Therefore, I will not
+    honor requests of that nature.
+
+(7) If you are interested in MEI predictions, please contact me directly under my e-mail address:
+    <a href="mailto:klaus.wolter@noaa.gov">Klaus Wolter (klaus.wolter@noaa.gov)</a>.
+
+Link to ranked MEI values is <a href="http://www.esrl.noaa.gov/psd/enso/mei/rank.html">here</a>.
+
+Go back to <a href="http://www.esrl.noaa.gov/psd/enso/mei/">MEI homepage</a>.
+
+</pre>
+
+<div id="feedly-mini" title="feedly Mini tookit"></div></body></html>
