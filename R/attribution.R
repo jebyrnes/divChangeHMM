@@ -47,6 +47,7 @@ fishWithPredictors <- join(fishPlot, tempWavesKelpSites) %>%
   filter(!is.na(mean_waveheight))
 
 fishWithPredictors <- join(fishWithPredictors, hard_substrate)
+
 ######
 # Modeling attribution
 ######
