@@ -52,7 +52,7 @@ library(MCMCglmm)
 
 #Full model - will not coverge
 mod.full <- lmer(Aggregated_Richness ~ Year*Scale*Bounded_region +
-                   (1+ Year*Scale*Bounded_region|sampleID),
+                   (1+ Year*Scale*Bounded_region|SampleID),
                  data=simData)
 
 simData$BR <- simData$Bounded_region/sd(simData$Bounded_region)
@@ -66,7 +66,7 @@ mod.simple.ranef <- lmer(Aggregated_Richness ~ Year*log(Scale)*BR +
 #Variable intercept only - converges!
 #even with log(scale) varying randmoly!
 mod.novarslope.ranef<- lmer(Aggregated_Richness ~ Year*log(Scale)*Bounded_region +
-                                   (1+log(Scale)|SampleID),
+                                   (1 + log(Scale)|SampleID),
                                  data=simData)
 
 summary(mod.novarslope.ranef)
@@ -75,18 +75,18 @@ summary(mod.novarslope.ranef)
 library(nlme)
 mod.lme.full <- lme(Aggregated_Richness ~ Year*Scale*Bounded_region,
                     random = ~1+Year*Scale*Bounded_region|SampleID,
-                    correlation= corCAR1 (form = ~Year | SampleID),
+                    correlation= corCAR1(form = ~Year | SampleID),
                     data=simData)
 
 
 mod.lme.varInt <- lme(Aggregated_Richness ~ Year*Scale*Bounded_region,
-                      random = ~1|sampleID,
-                      correlation= corCAR1 (form = ~Year | sampleID),
-                      data=simData)
+                      random = ~1|SampleID,
+                      correlation= corCAR1(form = ~Year | SampleID),
+                      data=simData) %>% select(distinct(SampleID, Year)))
 summary(mod)
 
 mod.mcmc <- MCMCglmm(Aggregated_Richness ~ Year*Scale*BR,
-                     random=~us(1+Scale*BR):sampleID,
+                     random=~us(1+Scale*BR):SampleID,
                      data=simData)
 
 summary(mod.mcmc)
