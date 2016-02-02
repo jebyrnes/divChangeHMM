@@ -59,6 +59,7 @@ getSubData <- function(dataset,
                        sampleframe=NA, noSpecies="-99999",
                        uniquePerms=T){
   #if no sample frame with unique info about samples has been provided, make one
+  browser()
   if(is.na(sampleframe[1,1])){
     sampleframe <- dataset %>% 
       group_by(Latitude, Longitude) %>%
@@ -76,12 +77,13 @@ getSubData <- function(dataset,
   samps <- replicate(nplots, sample.int(nplots,nsamps))
   if(uniquePerms) samps <- unique_perm_sample(1:nplots,nsamps)
   if(nsamps==1) samps <- 1:nrow(dataset)
+  if (is.null(dim(samps))) dim(samps) <- c(1, length(samps))
   
   newdata <- apply(samps, 2, function(x) makDatasetFromSampleIds(x, dataset, noSpecies=noSpecies))
   
   #turn the list back into a data frame
-  plyr::ldply(newdata)
-  
+  newdata <- rbind_all(newdata)
+  return(newdata)
 }
 
 
