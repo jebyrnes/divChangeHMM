@@ -59,7 +59,6 @@ getSubData <- function(dataset,
                        sampleframe=NA, noSpecies="-99999",
                        uniquePerms=T){
   #if no sample frame with unique info about samples has been provided, make one
-  browser()
   if(is.na(sampleframe[1,1])){
     sampleframe <- dataset %>% 
       group_by(Latitude, Longitude) %>%
