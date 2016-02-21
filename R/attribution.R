@@ -42,11 +42,11 @@ tempWavesSites <- tempWavesSites %>%
 
 tempWavesKelpSites <- join(tempWavesSites, kelp)
 
-fishWithPredictors <- join(fishPlot, tempWavesKelpSites) %>% 
+allSitePredictors <- join(tempWavesKelpSites, hard_substrate)
+
+fishWithPredictors <- join(fishPlot, allSitePredictors %>% select(-X, -Month)) %>% 
   filter(!is.na(mean_temp_c))%>% 
   filter(!is.na(mean_waveheight))
-
-fishWithPredictors <- join(fishWithPredictors, hard_substrate)
 
 ################################
 ####Make permuted data frame
@@ -54,10 +54,16 @@ fishWithPredictors <- join(fishWithPredictors, hard_substrate)
 #       run model as in fishAnalysis but with envt predictors
 #       look at how envt predictors change over time at different scales
 ################################
+fishWithEnvt <- join(fish, allSitePredictors %>% select(-X, -Month)) %>% 
+  filter(!is.na(mean_temp_c))%>% 
+  filter(!is.na(mean_waveheight))
 
+simDataEnvt <- lapply(2:14, function(m) getSubData(dataset=fishWithEnvt, nplots=nplots, nsamps=m, sampleframe=fishSamples, envt=T))
+simDataEnvt <- rbind_all(simDataEnvt)
+simDataEnvt <- plyr::rbind.fill(simDataEnvt, fishWithPredictors)
 
 ######
-# Modeling attribution
+# Modeling attribution for 1 plot
 ######
 
 # Model the effect of temperature, waves, and kelp
@@ -83,6 +89,21 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
   facet_wrap(~Site) +
   stat_smooth(method="lm", fill=NA, color="red", size=1)
 
+########
+# Modeling attribution for sims
+######
+
+# Model the effect of temperature, waves, and kelp
+# with a temp*wave interaction as abiotic influences might both affect one 
+# another
+
+fishLmerSims <- lmer(Aggregated_Richness ~ log(Scale)*(
+                     scale(Year, scale=F) + 
+                   mean_temp_c* mean_waveheight +
+                   log_stipe_density + Hard_Substrate_Percent) +
+                     (1+log(Scale) |SampleID),
+                 data=simDataEnvt)
+summary(fishLmerSims)
 
 ########
 # Let's take a gander at kelp
@@ -126,5 +147,6 @@ waveLmer <- lmer(mean_waveheight ~ scale(Year, scale=F) +
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)
 summary(waveLmer)
+
 
 

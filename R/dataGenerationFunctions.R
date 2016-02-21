@@ -60,7 +60,8 @@ unique_perm_sample <- function(v, l){
 getSubData <- function(dataset, 
                        nplots, nsamps, 
                        sampleframe=NA, noSpecies="-99999",
-                       uniquePerms=T){
+                       uniquePerms=T,
+                       envt=F){
   #if no sample frame with unique info about samples has been provided, make one
   if(is.na(sampleframe[1,1])){
     sampleframe <- dataset %>% 
@@ -81,7 +82,7 @@ getSubData <- function(dataset,
   if(nsamps==1) samps <- 1:nrow(dataset)
   if (is.null(dim(samps))) dim(samps) <- c(1, length(samps))
   
-  newdata <- apply(samps, 2, function(x) makDatasetFromSampleIds(x, dataset, noSpecies=noSpecies))
+  newdata <- apply(samps, 2, function(x) makDatasetFromSampleIds(x, dataset, noSpecies=noSpecies, envt=envt))
   
   #turn the list back into a data frame
   newdata <- rbind_all(newdata)
@@ -102,7 +103,35 @@ makDatasetFromSampleIds <- function(x, dataset, noSpecies="-99999" , envt=F){
               Bounded_region=getBoundingRegion(data.frame(Latitude=Latitude, Longitude=Longitude)),
               SampleID=paste(x, collapse="-"),
               noSp = as.numeric(noSpecies %in% unique(Species)))
+  if(envt){
+    #if fish are merged with envt data
+    #note the averaging by ID first, then by year, to
+    #deal with uneven # of species in each sample
+    envtOut <- subdata %>% group_by(SampleID, Year) %>%
+      summarise(Depth.m. = mean(Depth.m., na.rm=T),
+                mean_temp_c = mean(mean_temp_c, na.rm=T),
+                max_mean_temp_c = mean(max_mean_temp_c, na.rm=T),
+                mean_waveheight = mean(mean_waveheight, na.rm=T),
+                max_waveheight = mean(max_waveheight, na.rm=T),
+                mean_max_waveheight = mean(mean_max_waveheight, na.rm=T),
+                stipe_density = mean(stipe_density, na.rm=T),
+                Hard_Substrate_Percent = mean(Hard_Substrate_Percent, na.rm=T)
+      ) %>% ungroup() %>% group_by(Year) %>%
+    summarise(Depth.m. = mean(Depth.m., na.rm=T),
+              mean_temp_c = mean(mean_temp_c, na.rm=T),
+              max_mean_temp_c = mean(max_mean_temp_c, na.rm=T),
+              mean_waveheight = mean(mean_waveheight, na.rm=T),
+              max_waveheight = mean(max_waveheight, na.rm=T),
+              mean_max_waveheight = mean(mean_max_waveheight, na.rm=T),
+              stipe_density = mean(stipe_density, na.rm=T),
+              log_stipe_density = log(mean(stipe_density, na.rm=T)+1),
+              Hard_Substrate_Percent = mean(Hard_Substrate_Percent, na.rm=T),
+              SampleID=paste(x, collapse="-")
+    )
+    
+  subdataOut <- left_join(subdataOut, envtOut)
   
+  }
   #deal with 0 species, so we don't have false 1 species samples
   noSp <- as.numeric(noSpecies %in% unique(subdata$Species))
   
