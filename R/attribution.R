@@ -99,9 +99,9 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 
 fishLmerSims <- lmer(Aggregated_Richness ~Bounded_region* log(Scale)*(
                      scale(Year, scale=F) + 
-                   scale(mean_temp_c, scale=F)* scale(mean_waveheight, scale=F) +
-                   log_stipe_density + Hard_Substrate_Percent) +
-                     (1+log(Scale)+ Bounded_region|SampleID),
+                       mean_temp_c* mean_waveheight +
+                       log_stipe_density + Hard_Substrate_Percent) +
+                     (1+log(Scale)+Bounded_region|SampleID),
                  data=simDataEnvt)
 summary(fishLmerSims)
 
