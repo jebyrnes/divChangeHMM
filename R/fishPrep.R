@@ -8,8 +8,11 @@
 #Load libraries and data
 #########
 
+#Load methods for dealing with data
+source("./dataGenerationFunctions.R")
+
 #for plotting
-library(plyr)
+#library(plyr)
 library(ggplot2)
 theme_set(theme_bw(base_size=17))
 
@@ -19,9 +22,6 @@ library(dplyr)
 #For analysis
 library(lme4)
 library(lmerTest)
-
-#Load methods for dealing with data
-source("./dataGenerationFunctions.R")
 
 #Load the fish data
 #fish <- read.csv("../../output_data/sbc_fish_species_rawdata.csv") #jarrett's data for checking
@@ -35,9 +35,9 @@ fish <- subset(fish, fish$Year!=2000) #too much variation in this year
 #########
 
 fishSamples <- fish %>% group_by(Latitude, Longitude, Year) %>%
-  summarise(n=length(Latitude)) %>% ungroup() %>%  #reduce the dataset down to one line per site*year
+  dplyr::summarise(n=length(Latitude)) %>% ungroup() %>%  #reduce the dataset down to one line per site*year
   group_by(Latitude, Longitude) %>%
-  summarise(nYearsSampled=length(Latitude)) %>% 
+  dplyr::summarise(nYearsSampled=length(Latitude)) %>% 
   ungroup() %>%
   filter(nYearsSampled==max(nYearsSampled))
 
@@ -53,7 +53,7 @@ nplots <- length(unique(paste(fish$Latitude, fish$Longitude)))
 #########
 
 firstDate2005 <- fish %>% group_by(Genus, Species) %>%
-  summarise(firstDate=min(Year)) %>%
+  dplyr::summarise(firstDate=min(Year)) %>%
   filter(firstDate>2004)
 
 
@@ -61,15 +61,16 @@ firstDate2005 <- fish %>% group_by(Genus, Species) %>%
 #Look at small and large scales only
 ##########
 fishPlot <- fish %>% group_by(Latitude, Longitude, Year, SampleID) %>%
-  summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
+  dplyr::summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
             Scale=1,
             Bounded_region=1)
 #qplot(Year, Aggregated_Richness, color=paste(Latitude, Longitude), data=fishPlot, geom="line")
 
-
-fishAll <- fish %>% group_by(Year) %>%
-  summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
-            Scale=length(unique(paste(Latitude, Longitude))),
-            Bounded_region=getBoundingRegion(data.frame(Latitude=Latitude, Longitude=Longitude)))
+#Do statement won't work for some reason...
+ 
+ fishAll <- fish %>% group_by(Year) %>%
+   dplyr::summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
+             Scale=length(unique(paste(Latitude, Longitude))),
+             Bounded_region=getBoundingRegion(data.frame(Latitude=Latitude, Longitude=Longitude)))
 
 #qplot(Year, Aggregated_Richness, data=fishAll, geom="line") + xlab("Year") +ylab("Fish species Richness")

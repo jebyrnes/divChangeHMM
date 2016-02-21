@@ -15,10 +15,10 @@ library(lmerTest)
 source("fishPrep.R")
 
 temp <- read.csv("../data/sbc_temp_summary_MayToJuly.csv")
-temp <- temp %>% rename(Site=site)
+temp <- temp %>% dplyr::rename(Site=site)
 
 waves <- read.csv("../data/sbc_wave_summary_MayToJuly.csv")
-waves <- waves %>% rename(Nearest.MOP=mop, Year=interval_year)
+waves <- waves %>% dplyr::rename(Nearest.MOP=mop, Year=interval_year)
 
 kelp <- read.csv("../data/sbc_macrocystis_annual.csv")
 kelp$log_stipe_density <- log(kelp$stipe_density+1)
@@ -38,7 +38,7 @@ tempWavesSites <- join(tempSites, waves)
 
 #use lat/long to join the temp info with fish
 tempWavesSites <- tempWavesSites %>% 
-  rename(Latitude = Lat, Longitude=Long)
+  dplyr::rename(Latitude = Lat, Longitude=Long)
 
 tempWavesKelpSites <- join(tempWavesSites, kelp)
 
@@ -47,6 +47,14 @@ fishWithPredictors <- join(fishPlot, tempWavesKelpSites) %>%
   filter(!is.na(mean_waveheight))
 
 fishWithPredictors <- join(fishWithPredictors, hard_substrate)
+
+################################
+####Make permuted data frame
+#todo: add a 'envt=T' option to getSubdata averaging envt vars
+#       run model as in fishAnalysis but with envt predictors
+#       look at how envt predictors change over time at different scales
+################################
+
 
 ######
 # Modeling attribution
@@ -85,7 +93,7 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 
 kelpLmer <- lmer(log_stipe_density ~ scale(Year, scale=F) + 
                     mean_waveheight*
-                   I(mean_temp_c^2)  + 
+                   mean_temp_c  + 
                    Hard_Substrate_Percent+
                    (1 |Site/Transect) ,
                  data=fishWithPredictors)

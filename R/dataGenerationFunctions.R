@@ -5,11 +5,11 @@
 # Author: Jarrett Byrnes
 #################################################################################
 
+library(plyr)
 library(dplyr)
 library(sp)
 library(rgeos)
 library(rgdal)
-require(plyr)
 
 getBoundingRegion <- function(dataset, 
                               inputProj=CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"), 
@@ -18,7 +18,7 @@ getBoundingRegion <- function(dataset,
                               plotsize=0.00001){
   
   #first, filter down to unique latlongs
-  uniqueLatLongs <- {dataset %>% group_by(Longitude, Latitude) %>% summarise(n=n())}[,1:2]
+  uniqueLatLongs <- {dataset %>% group_by(Longitude, Latitude) %>% dplyr::summarise(n=length(Latitude))}[,1:2]
   
   #get rid of bad rows  
   if(na.rm) uniqueLatLongs <- uniqueLatLongs %>% filter(!is.na(Latitude) & !is.na(Longitude))
@@ -42,7 +42,9 @@ getBoundingRegion <- function(dataset,
 
 
 
-#get unique permutations
+#get unique permutations of a vector
+#sampling from that vector without replacement
+#to generate each permutation to preserve independence
 unique_perm_sample <- function(v, l){
   m <- matrix(nrow=l)
   while(length(v)>l){
@@ -53,6 +55,7 @@ unique_perm_sample <- function(v, l){
   }
   m[,-1]
 }
+
 #
 getSubData <- function(dataset, 
                        nplots, nsamps, 
@@ -87,7 +90,7 @@ getSubData <- function(dataset,
 
 
 
-makDatasetFromSampleIds <- function(x, dataset, noSpecies="-99999" ){
+makDatasetFromSampleIds <- function(x, dataset, noSpecies="-99999" , envt=F){
   
   #subset the data to one set of samples
   subdata <- dataset %>% filter(SampleID %in% x)

@@ -23,7 +23,7 @@ source("./fishPrep.R")
 
 # We need to do half of 27 rounded down (so 13 samples). 14 plots cannot be 
 # sampled without replacement (see the unique_perm_sample() function)
-simData <- lapply(2:13, function(m) getSubData(dataset=fish, nplots=nplots, nsamps=m, sampleframe=fishSamples))
+simData <- lapply(2:14, function(m) getSubData(dataset=fish, nplots=nplots, nsamps=m, sampleframe=fishSamples))
 simData <- rbind_all(simData)
 simData <- plyr::rbind.fill(simData, fishPlot)
 
