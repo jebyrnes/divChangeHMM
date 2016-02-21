@@ -54,11 +54,11 @@ fishWithPredictors <- join(fishPlot, allSitePredictors %>% select(-X, -Month)) %
 #       run model as in fishAnalysis but with envt predictors
 #       look at how envt predictors change over time at different scales
 ################################
-fishWithEnvt <- join(fish, allSitePredictors %>% select(-X, -Month)) %>% 
-  filter(!is.na(mean_temp_c))%>% 
-  filter(!is.na(mean_waveheight))
+fishWithEnvt <- join(fish, allSitePredictors %>% select(-X, -Month))
 
-simDataEnvt <- lapply(2:14, function(m) getSubData(dataset=fishWithEnvt, nplots=nplots, nsamps=m, sampleframe=fishSamples, envt=T))
+simDataEnvt <- lapply(2:13, function(m) getSubData(dataset=fishWithEnvt, 
+                                                   nplots=nplots, nsamps=m, 
+                                                   sampleframe=fishSamples, envt=T))
 simDataEnvt <- rbind_all(simDataEnvt)
 simDataEnvt <- plyr::rbind.fill(simDataEnvt, fishWithPredictors)
 
@@ -97,11 +97,11 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 # with a temp*wave interaction as abiotic influences might both affect one 
 # another
 
-fishLmerSims <- lmer(Aggregated_Richness ~ log(Scale)*(
+fishLmerSims <- lmer(Aggregated_Richness ~Bounded_region* log(Scale)*(
                      scale(Year, scale=F) + 
-                   mean_temp_c* mean_waveheight +
+                   scale(mean_temp_c, scale=F)* scale(mean_waveheight, scale=F) +
                    log_stipe_density + Hard_Substrate_Percent) +
-                     (1+log(Scale) |SampleID),
+                     (1+log(Scale)+ Bounded_region|SampleID),
                  data=simDataEnvt)
 summary(fishLmerSims)
 
