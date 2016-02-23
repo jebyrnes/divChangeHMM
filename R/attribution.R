@@ -70,12 +70,54 @@ simDataEnvt <- plyr::rbind.fill(simDataEnvt, fishWithPredictors)
 # with a temp*wave interaction as abiotic influences might both affect one 
 # another
 
-fishLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) + 
-                   mean_temp_c* mean_waveheight +
+fishLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) +  
+                   mean_temp_c * mean_waveheight +
                    log_stipe_density + Hard_Substrate_Percent +
                    (1 |Site/Transect),
                  data=fishWithPredictors)
 summary(fishLmer)
+
+### CHECK THE VARIANCES
+# How do the standardized inputs compare?
+fishWithPredictors %>% summarise(rich_SD = sd(Aggregated_Richness), 
+                                 Year_SD = sd(scale(Year, scale = T)), 
+                                 tempC_SD = sd(scale(mean_temp_c)), 
+                                 wave_SD = sd(scale(mean_waveheight)), 
+                                 stipe_SD = sd(scale(log_stipe_density)), 
+                                 hard_SD = sd(scale(Hard_Substrate_Percent, scale = T))
+                                 )
+summary(fishWithPredictors)
+
+rand4 <- ~ year0Z | subSiteID
+
+library(nlme)
+
+# Make sure data are ordered by year
+fishWithPredictors <- fishWithPredictors %>% group_by(SampleID) %>% 
+  arrange(Year)
+
+fishWithPredictors$YearZ <- scale(fishWithPredictors$Year)
+head(fishWithPredictors)
+
+fishLME <- lme(fixed = Aggregated_Richness ~ 1 + 
+                 YearZ * (scale(mean_temp_c)) + 
+                 YearZ * (scale(mean_waveheight)) + 
+                 YearZ * scale(log_stipe_density) + 
+                 YearZ * scale(Hard_Substrate_Percent), 
+            data = fishWithPredictors, method = "REML", 
+            random =  ~ 1 | Site/Transect, 
+            correlation = corAR1())
+
+summary(fishLME)
+summary(fishLME)$tTable
+plot(fishLME)
+
+qplot(Year, Aggregated_Richness, group=paste(Site, Transect),
+      data=fishWithPredictors, size=log_stipe_density, alpha=I(0.7), 
+      shape=factor(Transect)) +
+  facet_wrap(~Site, scale="free_x") +
+  stat_smooth(method="lm", fill=NA, color="red", size=0.5)
+
 
 qplot(mean_temp_c, Aggregated_Richness, group=paste(Site, Transect),
       data=fishWithPredictors, size=mean_waveheight, alpha=I(0.7), 
@@ -96,13 +138,25 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 # Model the effect of temperature, waves, and kelp
 # with a temp*wave interaction as abiotic influences might both affect one 
 # another
-
-fishLmerSims <- lmer(Aggregated_Richness ~Bounded_region* log(Scale)*(
-                     scale(Year, scale=F) + 
-                       mean_temp_c* mean_waveheight +
-                       log_stipe_density + Hard_Substrate_Percent) +
-                     (1+log(Scale)+Bounded_region|SampleID),
+summary(simDataEnvt)
+fishLmerSims <- lmer(Aggregated_Richness ~ scale(Year, scale = F) + 
+                       mean_temp_c * mean_waveheight +
+                       log(Bounded_region) + Scale + 
+                       log_stipe_density + Hard_Substrate_Percent +
+                     (1 | SampleID),
                  data=simDataEnvt)
+summary(fishLmerSims)
+
+### RE's models
+names(simDataEnvt)
+
+fishLmerSims <- lmer(Aggregated_Richness ~ Bounded_region * log(Scale) * 
+                       (scale(Year, scale=F) + 
+                          mean_temp_c * mean_waveheight +
+                          log_stipe_density + Hard_Substrate_Percent) +
+                       (1 + log(Scale) + Bounded_region|SampleID),
+                     data=simDataEnvt)
+
 summary(fishLmerSims)
 
 ########
