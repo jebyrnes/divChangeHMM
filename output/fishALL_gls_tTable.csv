@@ -1,0 +1,11 @@
+"","Value","Std.Error","t-value","p-value"
+"(Intercept)",33.751,0.268,125.836,0
+"YearZ",0.962,0.072,13.381,0.006
+"YearZ:scale(temp_mean)",-0.216,0.103,-2.102,0.17
+"YearZ:scale(stipe_mean)",3.165,0.687,4.605,0.044
+"YearZ:scale(hard_mean)",30.265,8.975,3.372,0.078
+"YearZ:scale(waves_mean)",2.447,0.481,5.087,0.037
+"YearZ:scale(temp_CV)",-0.495,0.217,-2.281,0.15
+"YearZ:scale(stipe_CV)",2.018,0.677,2.982,0.096
+"YearZ:scale(hard_CV)",33.394,9.613,3.474,0.074
+"YearZ:scale(waves_CV)",-6.028,1.415,-4.261,0.051

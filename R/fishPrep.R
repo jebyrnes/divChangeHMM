@@ -64,6 +64,10 @@ fishPlot <- fish %>% group_by(Latitude, Longitude, Year, SampleID) %>%
   dplyr::summarise(Aggregated_Richness = length(unique(paste(Genus, Species))),
             Scale=1,
             Bounded_region=1)
+
+# checking number of years per transect
+fishPlot %>% group_by(SampleID) %>% summarise(nYears = n_distinct(Year))
+
 #qplot(Year, Aggregated_Richness, color=paste(Latitude, Longitude), data=fishPlot, geom="line")
 
 #Do statement won't work for some reason...
