@@ -15,6 +15,7 @@ library(nlme)
 ######
 
 #use fishPlot for analysis
+setwd("./R/")
 source("fishPrep.R")
 fishPlot %>% group_by(SampleID) %>% summarise(nYears = n_distinct(Year))
 
@@ -74,7 +75,7 @@ simDataEnvt <- rbind_all(simDataEnvt)
 simDataEnvt <- plyr::rbind.fill(simDataEnvt, fishWithPredictors)
 
 ######
-# Modeling attribution for 1 plot
+# Modeling attribution for 1 plot (at the transect scale)
 ######
 
 # Model the effect of temperature, waves, and kelp
@@ -87,6 +88,11 @@ fishLmer <- lmer(Aggregated_Richness ~ scale(Year, scale=F) +
                    (1 |Site/Transect),
                  data=fishWithPredictors)
 summary(fishLmer)
+
+# check normality and homogeneity of variances
+par(mfrow = c(1,2))
+qqnorm(resid(fishLmer)); qqline(resid(fishLmer))
+plot(resid(fishLmer) ~ fitted(fishLmer)); abline(h=0)
 
 ### CHECK THE VARIANCES
 # How do the standardized inputs compare?
@@ -104,7 +110,7 @@ summary(fishWithPredictors)
 fishWithPredictors <- fishWithPredictors %>% group_by(SampleID) %>% 
   arrange(Year)
 
-fishWithPredictors$YearZ <- scale(fishWithPredictors$Year)
+fishWithPredictors$YearZ <- scale(fishWithPredictors$Year, scale = FALSE)
 head(fishWithPredictors)
 
 df1 <- fishWithPredictors %>%
@@ -117,6 +123,17 @@ View(df1)
 ### They should be equal (e.g., 14 years per transect)
 ### Ok, I see - driver data is not available for every year
 
+# No transformation of predictors
+fishLME <- lme(fixed = Aggregated_Richness ~ 1 +
+                 YearZ * mean_temp_c +
+                 YearZ * mean_waveheight + 
+                 YearZ * log_stipe_density + 
+                 YearZ * Hard_Substrate_Percent, 
+               data = fishWithPredictors, method = "REML", 
+               random = ~ 1 | Site/Transect, 
+               correlation = corAR1())
+
+# Scale predictors, but the result is similar
 fishLME <- lme(fixed = Aggregated_Richness ~ 1 + 
                  YearZ * (scale(mean_temp_c)) + 
                  YearZ * (scale(mean_waveheight)) + 
@@ -130,30 +147,63 @@ summary(fishLME)
 summary(fishLME)$tTable
 plot(fishLME)
 
-write.csv(round(summary(fishLME)$tTable, 3), 
-          "../output/fishLME_tTable.csv")
+# Note that there is a strong correlation between hard substrate and the effect of year
+names(fishWithPredictors)
+ggplot(data = fishWithPredictors, aes(Year, Hard_Substrate_Percent)) 
 
-qplot(Year, Aggregated_Richness, group=paste(Site, Transect),
-      data=fishWithPredictors, size=log_stipe_density, alpha=I(0.7), 
-      shape=factor(Transect)) +
-  facet_wrap(~Site, scale="free_x") +
-  stat_smooth(method="lm", fill=NA, color="red", size=0.5)
-
-qplot(log_stipe_density, Aggregated_Richness, group=paste(Site, Transect),
+qplot(Year, Hard_Substrate_Percent, group=paste(Site, Transect),
       data=fishWithPredictors, alpha=I(0.7), 
       shape=factor(Transect)) +
   facet_wrap(~Site, scale="free_x") +
   stat_smooth(method="lm", fill=NA, color="red", size=0.5)
 
+# Remove the offending transects
+fishWithPredictors2 <- fishWithPredictors %>% filter(Hard_Substrate_Percent > 10)
+
+qplot(Year, Hard_Substrate_Percent, group=paste(Site, Transect),
+      data=fishWithPredictors2, alpha=I(0.7), 
+      shape=factor(Transect)) +
+  facet_wrap(~Site, scale="free_x") +
+  stat_smooth(method="lm", fill=NA, color="red", size=0.5)
+
+fishLME <- lme(fixed = Aggregated_Richness ~ 1 +
+                 YearZ * mean_temp_c +
+                 YearZ * mean_waveheight + 
+                 YearZ * log_stipe_density, 
+               data = fishWithPredictors2, method = "REML", 
+               random = ~ 1 | Site/Transect, 
+               correlation = corAR1())
+summary(fishLME)
+summary(fishLME)$tTable
+plot(fishLME)
+
+# using broom
+tidy(fishLME)
+head(augment(fishLME))
+
+write.csv(round(summary(fishLME)$tTable, 3), 
+          "../output/fishLME_tTable.csv")
+
+qplot(Year, Aggregated_Richness, group=paste(Site, Transect),
+      data=fishWithPredictors2, size=log_stipe_density, alpha=I(0.7), 
+      shape=factor(Transect)) +
+  facet_wrap(~Site, scale="free_x") +
+  stat_smooth(method="lm", fill=NA, color="red", size=0.5)
+
+qplot(log_stipe_density, Aggregated_Richness, group=paste(Site, Transect),
+      data=fishWithPredictors2, alpha=I(0.7), 
+      shape=factor(Transect)) +
+  facet_wrap(~Site, scale="free_x") +
+  stat_smooth(method="lm", fill=NA, color="red", size=0.5)
 
 qplot(mean_temp_c, Aggregated_Richness, group=paste(Site, Transect),
-      data=fishWithPredictors, size=mean_waveheight, alpha=I(0.7), 
+      data=fishWithPredictors2, size=mean_waveheight, alpha=I(0.7), 
       shape=factor(Transect)) +
   facet_wrap(~Site, scale="free_x") +
   stat_smooth(method="lm", fill=NA, color="red", size=0.5)
 
 qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
-      data=fishWithPredictors, size=mean_temp_c) +
+      data=fishWithPredictors2, size=mean_temp_c) +
   facet_wrap(~Site) +
   stat_smooth(method="lm", fill=NA, color="red", size=1)
 
@@ -162,9 +212,8 @@ qplot(mean_waveheight, Aggregated_Richness, group=paste(Site, Transect),
 # Next question: what predicts kelp abundance?
 kelpLME <- lme(fixed = log_stipe_density ~ 1 + 
                  YearZ * scale(mean_temp_c) * 
-                 YearZ * scale(mean_waveheight) + 
-                 YearZ * scale(Hard_Substrate_Percent), 
-               data = fishWithPredictors, method = "REML", 
+                 YearZ * scale(mean_waveheight),
+               data = fishWithPredictors2, method = "REML", 
                random =  ~ 1 | Site/Transect, 
                correlation = corAR1())
 
@@ -209,6 +258,9 @@ summary(fishLmerSims)
 ### RE's models
 
 names(allSitePredictors)
+qplot(Year, Hard_Substrate_Percent, data = allSitePredictors)
+# remove sites with 0 hard substrate
+allSitePredictors <- allSitePredictors %>% filter(Hard_Substrate_Percent > 10)
 
 # Summarize predictors for entire SBC region
 allPredictors <- allSitePredictors %>% group_by(Year) %>% 
@@ -244,70 +296,88 @@ names(fishAll_predictors)
 
 fishAll_predictors$YearZ <- scale(fishAll_predictors$Year, scale = FALSE)
 
+summary(gls(Aggregated_Richness ~ YearZ * waves_mean, 
+    data = fishAll_predictors, 
+    correlation = corAR1()))
+
 fishAll_gls1 <- gls(Aggregated_Richness ~ 1 + 
                      YearZ * scale(temp_mean) + 
                      YearZ * scale(stipe_mean) + 
-                     YearZ * scale(hard_mean) + 
+                     #YearZ * scale(hard_mean) + 
                      YearZ * scale(waves_mean), 
                    data = fishAll_predictors, 
                    correlation = corAR1())
 summary(fishAll_gls1)$tTable
 
+
+fishAll_gls1 <- gls(Aggregated_Richness ~ 1 + 
+                      YearZ * temp_mean + 
+                      YearZ * stipe_mean + 
+                      #YearZ * scale(hard_mean) + 
+                      YearZ * waves_mean, 
+                    data = fishAll_predictors, 
+                    correlation = corAR1())
+
+summary(fishAll_gls1)$tTable
+plot(fishAll_gls1)
+qplot(Year, Aggregated_Richness, data = fishAll_predictors)
+qplot(Year, hard_mean, data = fishAll_predictors)
+qplot(Year, stipe_mean, data = fishAll_predictors)
+fishAll_predictors %>% select(temp_mean:YearZ) %>% pairs()
+
+qplot(Year, Aggregated_Richness, data = fishAll_predictors, size = waves_mean)
+qplot(stipe_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
+qplot(waves_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
+qplot(temp_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
+
+qplot(Year, stipe_mean, data = fishAll_predictors)
+
 fishAll_gls2 <- gls(Aggregated_Richness ~ 1 + 
                      YearZ * scale(temp_CV) + 
                      YearZ * scale(stipe_CV) +
-                     YearZ * scale(hard_CV) +
+                     #YearZ * scale(hard_CV) +
                      YearZ * scale(waves_CV), 
                    data = fishAll_predictors, 
                    correlation = corAR1())
 summary(fishAll_gls2)$tTable
 
-AIC(fishAll_gls1, fishAll_gls2) # CV has lower AIC
+AIC(fishAll_gls1, fishAll_gls2) # CV has far higher AIC, discard heterogeneity hypothesis
 
 
-fishAll_gls3 <- gls(Aggregated_Richness ~ YearZ + 
-                      YearZ : scale(temp_mean) + 
-                      YearZ : scale(stipe_mean) + 
-                      YearZ : scale(hard_mean) + 
-                      YearZ : scale(waves_mean) + 
-                      YearZ : scale(temp_CV) + 
-                      YearZ : scale(stipe_CV) +
-                      YearZ : scale(hard_CV) +
-                      YearZ : scale(waves_CV), 
-                    data = fishAll_predictors, 
-                    correlation = corAR1())
-summary(fishAll_gls3)
-summary(fishAll_gls3)$tTable
-write.csv(round(summary(fishAll_gls3)$tTable, 3), 
+write.csv(round(summary(fishAll_gls1)$tTable, 3), 
           "../output/fishALL_gls_tTable.csv")
+
 plot(fishAll_gls2)
 
+fishAll_gls4 <- gls(Aggregated_Richness ~ 
+                      YearZ * temp_mean * waves_mean, 
+                    data = fishAll_predictors, 
+                    correlation = corAR1())
+
+summary(fishAll_gls4)
+summary(fishAll_gls4)$tTable
+plot(fishAll_gls4)
 
 ##### LOOK AT TRENDS IN CV #####
 library(tidyr)
 head(fishAll_predictors)
 
-predLong <- fishAll_predictors %>% select(Year, temp_mean:waves_CV) %>%
-  gather(key = driver, value = value, temp_mean:waves_CV)
-
+predLong <- fishAll_predictors %>% select(Year, Aggregated_Richness, temp_mean:waves_CV) %>%
+  gather(key = driver, value = value, Aggregated_Richness:waves_CV)
+head(predLong)
+str(predLong)
 ggplot(data = predLong, aes(Year, value)) + geom_point() + 
   geom_smooth(method = "lm") + facet_wrap(~ driver, scales = "free")
 
+# Kelp changes at regional scale
+kelp_gls <- gls(stipe_mean ~ 
+                      YearZ * scale(temp_mean) * scale(waves_mean), 
+                    data = fishAll_predictors, 
+                    correlation = corAR1())
 
-
-fishAll_lme <- lme(fixed = Aggregated_Richness ~ 1 + 
-                     YearZ * scale(mean_temp_c) * 
-                     YearZ * scale(mean_waveheight) + 
-                     YearZ * scale(Hard_Substrate_Percent), 
-                   data = fishWithPredictors, method = "REML", 
-                   random =  ~ 1 | Site/Transect, 
-                   correlation = corAR1())
-
-summary(kelpLME)
-summary(kelpLME)$tTable
-plot(kelpLME)
-
-summary(fishLmerSims)
+summary(kelp_gls)
+summary(kelp_gls)$tTable
+plot(kelp_gls) # decline in variance
 
 
 

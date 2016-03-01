@@ -1,0 +1,65 @@
+At the local scale:
+
+Richness ~ Year * Temp + Year * Waves + Year * Kelp
+
+                              Value  Std.Error  DF     t-value    p-value
+(Intercept)              8.96359840 4.94117440 261  1.81406234 0.07081634
+YearZ                    0.04684655 1.13316732 261  0.04134125 0.96705546
+mean_temp_c             -0.27773444 0.30865551 261 -0.89982012 0.36904544
+mean_waveheight          1.97151335 2.73862798 261  0.71989090 0.47223633
+log_stipe_density        0.56031353 0.23122310 261  2.42325929 0.01606260
+YearZ:mean_temp_c       -0.01583589 0.07211166 261 -0.21960232 0.82635253
+YearZ:mean_waveheight    0.35645735 0.46413750 261  0.76799946 0.44318178
+YearZ:log_stipe_density  0.13975153 0.06413995 261  2.17885311 0.03023729
+
+Conclusion: Kelp has a direct positive influence on fish richness, and has a positive effect on the rate of change in fish richness.  No temporal trend in richness. 
+
+What is driving changes in kelp?
+
+Kelp ~ Year * Temp * Waves 
+
+
+                                                     Value  Std.Error  DF   t-value p-value
+(Intercept)                                      1.2256076 0.15810376 261  7.751919  0.0000
+YearZ                                           -0.0689318 0.01646886 261 -4.185582  0.0000
+scale(mean_temp_c)                               0.1056804 0.05785708 261  1.826577  0.0689
+scale(mean_waveheight)                          -0.2412289 0.07026845 261 -3.432961  0.0007
+YearZ:scale(mean_temp_c)                         0.0311386 0.01439082 261  2.163785  0.0314
+YearZ:scale(mean_waveheight)                     0.0438834 0.01365850 261  3.212900  0.0015
+scale(mean_temp_c):scale(mean_waveheight)       -0.0084337 0.06046994 261 -0.139469  0.8892
+YearZ:scale(mean_temp_c):scale(mean_waveheight) -0.0450398 0.01759389 261 -2.559969  0.0110
+
+Conclusion: Kelp is declining over time. Waves negatively influence kelp, but temperature positively influences kelp (though not sig). Waves have a positive effect on the rate of change in kelp (i.e., exacerbate the direct negative effects). Also, there is an interesting wave:temp interaction on rate of kelp change. 
+
+
+At the regional scale:
+(remember, this is only a subset of the richness data, so the temporal trend will be harder to pick up)
+
+Richness ~ Year * Temp + Year * Waves + Year * Kelp
+
+                       Value  Std.Error    t-value     p-value
+(Intercept)      168.4769929 35.5831528  4.7347404 0.009072305
+YearZ            -18.2486479  7.9438790 -2.2971961 0.083195301
+temp_mean         -6.9479995  1.7843092 -3.8939436 0.017631614
+stipe_mean        -0.8857305  2.2926070 -0.3863421 0.718914218
+waves_mean       -49.1055958 20.4251269 -2.4041758 0.074020425
+YearZ:temp_mean    0.6310098  0.4007046  1.5747505 0.190432563
+YearZ:stipe_mean   5.6099341  1.0801661  5.1935847 0.006544906
+YearZ:waves_mean   5.9385560  5.3207796  1.1161064 0.326897530
+
+Conclusion: Negative temporal trend in richness, when accounting for kelp cover (if we exclude kelp cover from model, we recover the positive trend). Temperature has a direct negative effect on richness, as do waves. Kelp influences rate of change in richness in a positive direction - this is driven by three early years, that display decreasing richness with increasing kelp. Kelp declines over time, and richness is negatively correlated over time (! - but only due to three early years) - hence the overall negative temporal trend of richness maybe???
+
+
+Kelp ~ Year * Temp * Waves 
+(note that predictors are scaled to reduce correlations among predictors, 
+also residuals exhibit heteroscedasticity - warning!!!)
+
+                                               Value   Std.Error     t-value   p-value
+(Intercept)                               0.77867102 49.08032498  0.01586524 0.9881017
+YearZ                                    -0.12238340  0.11089343 -1.10361267 0.3316869
+scale(temp_mean)                         -0.11855450  0.11903484 -0.99596474 0.3756369
+scale(waves_mean)                         0.06229580  0.13697102  0.45481007 0.6728359
+YearZ:scale(temp_mean)                    0.06704225  0.03139252  2.13561190 0.0995776
+YearZ:scale(waves_mean)                   0.04501344  0.02907642  1.54810846 0.1965126
+scale(temp_mean):scale(waves_mean)        0.06914189  0.17331393  0.39894017 0.7103181
+YearZ:scale(temp_mean):scale(waves_mean)  0.05562114  0.06997147  0.79491174 0.4711661
