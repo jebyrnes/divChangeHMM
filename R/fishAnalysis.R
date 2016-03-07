@@ -52,7 +52,7 @@ sd(simData$Year)
 simData$YearCentered <- scale(simData$Year, scale = FALSE)
 sd(simData$YearCentered)
 
-simData$Year0 <- simData$Year - min(simData$Year + 1)
+simData$Year0 <- simData$Year - min(simData$Year - 1)
 
 
 # Scale
