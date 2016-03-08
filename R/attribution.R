@@ -71,8 +71,27 @@ fishWithEnvt <- join(fish, allSitePredictors %>% select(-X, -Month))
 simDataEnvt <- lapply(2:13, function(m) getSubData(dataset=fishWithEnvt, 
                                                    nplots=nplots, nsamps=m, 
                                                    sampleframe=fishSamples, envt=T))
+
 simDataEnvt <- rbind_all(simDataEnvt)
 simDataEnvt <- plyr::rbind.fill(simDataEnvt, fishWithPredictors)
+
+simDataEnvt$Year0 <- simDataEnvt$Year - min(simDataEnvt$Year - 1)
+simDataEnvt$BrLog <- log(simDataEnvt$Bounded_region)
+head(simDataEnvt)
+names(simDataEnvt)
+
+sd2 <- simDataEnvt[complete.cases(simDataEnvt[, c(8,10,14)]),]
+
+mod1 <- lme(Aggregated_Richness ~ Year0 * Scale + 
+              Year0 * BrLog +
+              Year0 * mean_temp_c + 
+              Year0 * mean_waveheight + 
+              Year0 * stipe_density, 
+            random = ~ Year0 | SampleID,
+            correlation = corAR1(), 
+            data = sd2, 
+            control = lmeControl(opt = "optim"))
+summary(mod1)
 
 ######
 # Modeling attribution for 1 plot (at the transect scale)

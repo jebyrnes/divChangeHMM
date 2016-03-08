@@ -97,70 +97,27 @@ summary(gls(Aggregated_Richness ~ Year0,
             data = fishAll_predictors, 
             correlation = corAR1()))
 
-
-#### NO SIGNIFICANT TEMPORAL TREND ---- STOP HERE, NO ATTRIBUTION #####
-
-
-qplot(Year, Aggregated_Richness, data = fishAll_predictors)
-
-summary(gls(Aggregated_Richness ~ Year0 * waves_mean, 
-            data = fishAll_predictors, 
+# But with fish_all?  
+summary(gls(Aggregated_Richness ~ Year, 
+            data = fishAll, 
             correlation = corAR1()))
 
-fishAll_gls1 <- gls(Aggregated_Richness ~ 1 + 
-                      Year0 * scale(temp_mean) + 
-                      Year0 * scale(stipe_mean) + 
-                      #Year0 * scale(hard_mean) + 
-                      Year0 * scale(waves_mean), 
+
+#### NO SIGNIFICANT TEMPORAL TREND ---- STOP HERE, NO ATTRIBUTION? #####
+# 
+qplot(Year, Aggregated_Richness, data = fishAll)
+qplot(Year, Aggregated_Richness, data = fishAll_predictors)
+
+with(fishAll_predictors, sd(temp_mean))
+with(fishAll_predictors, sd(stipe_mean))
+with(fishAll_predictors, sd(waves_mean))
+
+fishAll_gls1 <- gls(Aggregated_Richness ~ Year0 +
+                      temp_mean + stipe_mean + waves_mean, 
                     data = fishAll_predictors, 
                     correlation = corAR1())
-summary(fishAll_gls1)$tTable
-
-
-fishAll_gls1 <- gls(Aggregated_Richness ~ 1 + 
-                      Year0 * temp_mean + 
-                      Year0 * stipe_mean + 
-                      #Year0 * scale(hard_mean) + 
-                      Year0 * waves_mean, 
-                    data = fishAll_predictors, 
-                    correlation = corAR1())
-
 summary(fishAll_gls1)$tTable
 plot(fishAll_gls1)
-qplot(Year, Aggregated_Richness, data = fishAll_predictors)
-qplot(Year, hard_mean, data = fishAll_predictors)
-qplot(Year, stipe_mean, data = fishAll_predictors)
-fishAll_predictors %>% select(temp_mean:Year0) %>% pairs()
-
-qplot(Year, Aggregated_Richness, data = fishAll_predictors, size = waves_mean)
-qplot(stipe_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
-qplot(waves_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
-qplot(temp_mean, Aggregated_Richness, data = fishAll_predictors, size = Year)
-
-qplot(Year, stipe_mean, data = fishAll_predictors)
-
-fishAll_gls2 <- gls(Aggregated_Richness ~ 1 + 
-                      Year0 * scale(temp_CV) + 
-                      Year0 * scale(stipe_CV) +
-                      #Year0 * scale(hard_CV) +
-                      Year0 * scale(waves_CV), 
-                    data = fishAll_predictors, 
-                    correlation = corAR1())
-summary(fishAll_gls2)$tTable
-
-AIC(fishAll_gls1, fishAll_gls2) # CV has far higher AIC, discard heterogeneity hypothesis
-
 
 write.csv(round(summary(fishAll_gls1)$tTable, 3), 
           "../output/fishALL_gls_tTable.csv")
-
-plot(fishAll_gls2)
-
-fishAll_gls4 <- gls(Aggregated_Richness ~ 
-                      Year0 * temp_mean * waves_mean, 
-                    data = fishAll_predictors, 
-                    correlation = corAR1())
-
-summary(fishAll_gls4)
-summary(fishAll_gls4)$tTable
-plot(fishAll_gls4)
