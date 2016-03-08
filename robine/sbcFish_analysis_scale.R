@@ -198,7 +198,7 @@ pTransects
 pSites <- qplot(year, chao, data = gammaDF, color = site, 
                 geom = "line", xlab = "Year", ylab = "S-chao") + 
   no_legend + ggtitle("Site scale")
-pSites
+pSitesrobine
 
 pRegion <- qplot(year, chao, data = regDF, 
                  xlab = "Year", ylab = "S-chao", geom = "line") + 
