@@ -112,10 +112,10 @@ with(fishAll_predictors, sd(temp_mean))
 with(fishAll_predictors, sd(stipe_mean))
 with(fishAll_predictors, sd(waves_mean))
 
-fishAll_gls1 <- gls(Aggregated_Richness ~ Year0 +
-                      temp_mean + stipe_mean + waves_mean, 
+fishAll_gls1 <- gls(Aggregated_Richness ~ Year0 * stipe_mean, 
                     data = fishAll_predictors, 
                     correlation = corAR1())
+summary(fishAll_gls1)
 summary(fishAll_gls1)$tTable
 plot(fishAll_gls1)
 

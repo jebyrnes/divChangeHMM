@@ -7,11 +7,15 @@
 # returns the dataframe with richness, Shannon, and Pielou's evenness appended 
 # at the end of the dataframe.
 
+library(vegan)
+
 divMetF <- function(x, first1, last1) {
   specMat <- x[, first1:last1]
   x$rich <- specnumber(specMat)
   x$div <- diversity(specMat)
   x$even <- x$div/(log(x$rich))
   x$abund <- rowSums(specMat)
+  x$chao <- estimateR(specMat)[2, ]
+  x$chaoSE <- estimateR(specMat)[3, ]
   return(x)
 }
